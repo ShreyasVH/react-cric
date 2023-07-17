@@ -11,7 +11,7 @@ import { Waypoint } from "react-waypoint";
 
 export default function Home() {
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const year = urlSearchParams.get('year') ?? (new Date()).getFullYear();
+    const year = parseInt(urlSearchParams.get('year') ?? (new Date()).getFullYear());
     const [ tours, setTours ] = useState([]);
     const [ page, setPage ] = useState(1);
     const [ years, setYears ] = useState([]);
@@ -114,16 +114,16 @@ export default function Home() {
 
                             <Box justifyContent={'center'}>
                                 {
-                                    years.map(year => (
+                                    years.map(currentYear => (
                                         <Button
-                                            variant={'outlined'}
-                                            key={'year' + year}
+                                            variant={(currentYear === year) ? 'contained' : 'outlined'}
+                                            key={'year' + currentYear}
                                             color={'secondary'}
                                             sx={{marginLeft: '1%', marginRight: '1%'}}
-                                            onClick={handleYearClick(year)}
+                                            onClick={handleYearClick(currentYear)}
                                         >
                                             <Typography variant={'button'}>
-                                                {year}
+                                                {currentYear}
                                             </Typography>
                                         </Button>
                                     ))
