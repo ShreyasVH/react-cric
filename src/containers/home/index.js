@@ -25,6 +25,10 @@ export default function Home() {
         navigate('/browse?year=' + year);
     }
 
+    const handleTourClick = id => e => {
+        navigate('/tours/detail?id=' + id);
+    }
+
     useEffect(() => {
         Promise.all([
             getAllYears(),
@@ -89,7 +93,7 @@ export default function Home() {
                             tours.map(tour => (
                                 <Card raised sx={{marginBottom: '1%'}} key={'tour' + tour.id}>
                                     <CardActionArea>
-                                        <CardContent>
+                                        <CardContent onClick={handleTourClick(tour.id)}>
                                             <Typography color="text.secondary" sx={{display: 'inline'}}>
                                                 {tour.name}
                                             </Typography>
