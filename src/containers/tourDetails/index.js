@@ -3,10 +3,17 @@ import { getTour } from '../../endpoints/tours';
 import Card from '@mui/material/Card';
 import { CardActionArea, CardContent, Typography } from '@mui/material';
 import { formatDateTimeString } from '../../utils';
+import { useNavigate } from "react-router-dom";
 
 export default function TourDetails() {
     const [ tour, setTour ] = useState({});
     const [ loaded, setLoaded ] = useState(false);
+
+    const navigate = useNavigate();
+
+    const handleSeriesClick = id => e => {
+        navigate('/series/detail?id=' + id);
+    }
 
     useEffect(() => {
         const urlSearchParams = new URLSearchParams(window.location.search);
@@ -30,7 +37,7 @@ export default function TourDetails() {
                         tour.seriesList.map(series => (
                             <Card raised sx={{marginBottom: '1%'}} key={'series' + series.id}>
                                 <CardActionArea>
-                                    <CardContent>
+                                    <CardContent onClick={handleSeriesClick(series.id)}>
                                         <Typography color="text.secondary" sx={{display: 'inline'}}>
                                             {series.gameType.name}
                                         </Typography>
