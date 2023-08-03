@@ -4,3 +4,5 @@ export PORT=
 export PATH=
 
 export WDS_SOCKET_PORT=0
+
+export REACT_APP_API_ENDPOINT=

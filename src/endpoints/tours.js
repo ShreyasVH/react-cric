@@ -1,5 +1,5 @@
 import { get } from '../utils/api';
-const endpoint = 'https://cric.playframework.com';
+const endpoint = process.env.REACT_APP_API_ENDPOINT;
 
 
 export const getToursForYear = async (year, page, pageSize) => {
