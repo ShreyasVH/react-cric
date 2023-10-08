@@ -4,10 +4,17 @@ import Card from '@mui/material/Card';
 import { CardActionArea, CardContent, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { formatDateTimeString } from '../../utils';
+import { useNavigate } from 'react-router-dom';
 
 export default function TourDetails() {
     const [ series, setSeries ] = useState({});
     const [ loaded, setLoaded ] = useState(false);
+
+    const navigate = useNavigate();
+
+    const handleMatchClick = id => e => {
+        navigate('/matches/detail?id=' + id);
+    }
 
     const getWinMargin = (winMargin, winMarginType) => {
         let margin = winMarginType.toLowerCase();
@@ -69,7 +76,7 @@ export default function TourDetails() {
 
                     {
                         series.matches.map((match, index) => (
-                            <Card raised sx={{marginBottom: '1%'}} key={'match' + match.id}>
+                            <Card raised sx={{marginBottom: '1%'}} key={'match' + match.id} onClick={handleMatchClick(match.id)}>
                                 <CardActionArea>
                                     <CardContent>
                                         <Grid container>
