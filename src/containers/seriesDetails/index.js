@@ -15,7 +15,6 @@ export default function TourDetails() {
     const navigate = useNavigate();
 
     const handleDeleteClick = matchId => async e => {
-        console.log(matchId);
         e.preventDefault();
         e.stopPropagation();
         const deleteResponse = await removeMatch(matchId);
