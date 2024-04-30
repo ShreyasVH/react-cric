@@ -1,16 +1,33 @@
 import { useEffect, useState } from 'react';
 import { getSeries } from '../../endpoints/series';
+import { removeMatch } from '../../endpoints/matches';
 import Card from '@mui/material/Card';
 import { CardActionArea, CardContent, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { formatDateTimeString } from '../../utils';
+import { formatDateTimeString, copyObject } from '../../utils';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
 
 export default function TourDetails() {
     const [ series, setSeries ] = useState({});
     const [ loaded, setLoaded ] = useState(false);
 
     const navigate = useNavigate();
+
+    const handleDeleteClick = matchId => async e => {
+        console.log(matchId);
+        e.preventDefault();
+        e.stopPropagation();
+        const deleteResponse = await removeMatch(matchId);
+        if (deleteResponse.status === 200) {
+            const updatedSeries = copyObject(series);
+            updatedSeries.matches = series.matches.filter(m => m.id !== matchId);
+            setSeries(updatedSeries);
+            // TODO: add success alert snackbar
+        } else {
+            // TODO: add failure alert snackbar
+        }
+    }
 
     const handleMatchClick = id => e => {
         navigate('/matches/detail?id=' + id);
@@ -88,6 +105,10 @@ export default function TourDetails() {
                                                 <Typography color="text.secondary" sx={{display: 'block'}}>
                                                     {renderWinner(match)}
                                                 </Typography>
+
+                                                <Button color={'error'} variant={'contained'} onClick={handleDeleteClick(match.id)}>
+                                                    DELETE
+                                                </Button>
                                             </Grid>
 
                                             <Grid item lg={4} style={{textAlign: 'center'}}>
