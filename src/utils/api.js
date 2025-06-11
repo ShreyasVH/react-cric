@@ -60,4 +60,10 @@ export const del = (url, additionalHeaders = {}) => {
     });
 };
 
-export const execute = options => (axios(options));
+export const execute = async options => {
+    try {
+        return await axios(options);
+    } catch (e) {
+        return e.response;
+    }
+};
