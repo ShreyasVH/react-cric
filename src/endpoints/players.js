@@ -1,4 +1,4 @@
-import { post } from '../utils/api';
+import { post, get } from '../utils/api';
 const endpoint = process.env.REACT_APP_API_ENDPOINT;
 
 export const search = async keyword => {

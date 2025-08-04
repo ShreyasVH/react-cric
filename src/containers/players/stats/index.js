@@ -12,7 +12,7 @@ import {
 import Filters from '../../filters';
 import { useNavigate } from 'react-router-dom';
 import { FILTER_TYPE } from "../../../constants";
-import {copyObject} from "../../../utils";
+import { copyObject, showLoader, hideLoader } from "../../../utils";
 
 import { styled } from '@mui/system';
 
@@ -44,6 +44,9 @@ const Container = styled("div")(({ theme }) => ({
             }
         }
     },
+    '& .sortable': {
+        cursor: 'pointer'
+    }
 }));
 
 export default function PlayerStats() {
@@ -55,6 +58,9 @@ export default function PlayerStats() {
     const [ page, setPage ] = useState(1);
     const [ selectedFiltersTemp, setSelectedFiltersTemp ] = useState({
         type: 'batting'
+    });
+    const [ sortMap, setSortMap ] = useState({
+        'runs': 'desc'
     });
     const filterOptions = {
         type: {
@@ -117,7 +123,7 @@ export default function PlayerStats() {
     };
 
     const handleApplyFilters = async () => {
-        await updateData(1);
+        await updateData(1, sortMap);
     };
 
     const handleFilterEvent = event => {
@@ -152,9 +158,9 @@ export default function PlayerStats() {
                 let id = target.dataset['id'];
 
                 tempFilters[key] = id;
-                this.setState({
-                    selectedFiltersTemp: tempFilters
-                });
+                // this.setState({
+                //     selectedFiltersTemp: tempFilters
+                // });
             }
                 break;
             case FILTER_TYPE.RANGE: {
@@ -182,20 +188,29 @@ export default function PlayerStats() {
 
     const handleFilterClose = event => {
         setIsFilterOpen(false);
-    }
+    };
+
+    const handleSort = key => async event => {
+        event.preventDefault();
+
+        const order = ((sortMap.hasOwnProperty(key) && sortMap[key] === 'desc') ? 'asc' : 'desc');
+        await updateData(1, {
+            [key]: order
+        });
+    };
 
     const limit = 10;
 
-    const updateData = (selectedPage) => {
+    const updateData = (selectedPage, sortMap) => {
+        showLoader();
+
         const payload = {
             type: 'batting',
             filters: {},
             rangeFilters: {},
             count: limit,
             offset: (selectedPage - 1) * limit,
-            sortMap: {
-                runs: 'desc'
-            }
+            sortMap
         };
 
         const rangeFilterKeys = [
@@ -219,11 +234,13 @@ export default function PlayerStats() {
             setSelectedFilters(selectedFiltersTemp);
             handleFilterClose();
             setPage(selectedPage);
+            setSortMap(sortMap);
+            hideLoader();
         });
     };
 
     const goToPage = async page => {
-        await updateData(page);
+        await updateData(page, sortMap);
     };
 
     const renderPagination = () => {
@@ -280,19 +297,13 @@ export default function PlayerStats() {
         );
     }
 
-    useEffect(() => {
-        updateData(1);
-    }, []);
+    const renderSortSymbol = key => ((sortMap.hasOwnProperty(key)) ? ((sortMap[key] === 'asc') ? '\u0020\u2191' : '\u0020\u2193') : '');
 
-    useEffect(() => {
-        Promise.all()
-    }, []);
-
-    return (
-        <>
-            {
-                loaded && <Container>
-                    <Table>
+    const renderBattingStats = () => {
+        return (
+            <>
+                {
+                    selectedFiltersTemp.type === 'batting' && <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>
@@ -304,8 +315,31 @@ export default function PlayerStats() {
                                 <TableCell>
                                     Innings
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className='sortable' onClick={handleSort('runs')}>
                                     Runs
+                                    {renderSortSymbol('runs')}
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('balls')}>
+                                    Balls
+                                    {renderSortSymbol('balls')}
+                                </TableCell>
+                                <TableCell>
+                                    Notouts
+                                </TableCell>
+                                <TableCell>
+                                    Highest
+                                </TableCell>
+                                <TableCell>
+                                    4s
+                                </TableCell>
+                                <TableCell>
+                                    6s
+                                </TableCell>
+                                <TableCell>
+                                    50s
+                                </TableCell>
+                                <TableCell>
+                                    100s
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -325,10 +359,99 @@ export default function PlayerStats() {
                                     <TableCell>
                                         {stat.runs}
                                     </TableCell>
+                                    <TableCell>
+                                        {stat.balls}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.notOuts}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.highest}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.fours}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.sixes}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.fifties}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.hundreds}
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
+                }
+            </>
+        );
+    };
+
+    const renderBowlingStats = () => {
+        return (
+            <>
+                {
+                    selectedFiltersTemp.type === 'bowling' && <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    Player ID
+                                </TableCell>
+                                <TableCell>
+                                    Name
+                                </TableCell>
+                                <TableCell>
+                                    Innings
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('wickets')}>
+                                    Wickets
+                                    {renderSortSymbol('wickets')}
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+
+                        <TableBody>
+                            {stats.map(stat => (
+                                <TableRow key={stat.id}>
+                                    <TableCell>
+                                        {stat.id}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.name}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.innings}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.wickets}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                }
+            </>
+        );
+    };
+
+    useEffect(() => {
+        updateData(1, sortMap);
+    }, []);
+
+    useEffect(() => {
+        Promise.all()
+    }, []);
+
+
+
+    return (
+        <>
+            {
+                loaded && <Container>
+                    {renderBattingStats()}
+                    {renderBowlingStats()}
                     <Filters
                         isOpen={isFilterOpen}
                         onFilterOpen={handleFilterOpen}
