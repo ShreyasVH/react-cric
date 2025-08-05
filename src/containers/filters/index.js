@@ -8,7 +8,7 @@ import {
     AccordionSummary,
     AccordionDetails, Typography,
     Checkbox, FormControlLabel,
-    Radio
+    Radio, TextField
 } from '@mui/material';
 
 import { FilterList, Close, ExpandMore } from "@mui/icons-material";
@@ -165,14 +165,53 @@ export default function Filters(props) {
         );
     };
 
+    const renderRangeFilter = (key, filter) => {
+        return (
+            <div>
+                <TextField
+                    name={key + '[]'}
+                    data-filter={key}
+                    data-type={FILTER_TYPE.RANGE}
+                    onChange={handleEvent}
+                    inputProps={{
+                        'data-key': key,
+                        'data-type': FILTER_TYPE.RANGE,
+                        'data-rangetype': 'from'
+                    }}
+                    value={((props.selected.hasOwnProperty(key) && props.selected[key].hasOwnProperty('from')) ? props.selected[key].from : '')}
+                    variant="outlined"
+                    // className={this.props.classes.rangeInput}
+                    label="From"
+                    margin="normal"
+                />
+                <TextField
+                    name={key + '[]'}
+                    data-filter={key}
+                    data-type={FILTER_TYPE.RANGE}
+                    onChange={handleEvent}
+                    inputProps={{
+                        'data-key': key,
+                        'data-type': FILTER_TYPE.RANGE,
+                        'data-rangetype': 'to'
+                    }}
+                    value={((props.selected.hasOwnProperty(key) && props.selected[key].hasOwnProperty('to')) ? props.selected[key].to : '')}
+                    variant="outlined"
+                    // className={this.props.classes.rangeInput}
+                    label="To"
+                    margin="normal"
+                />
+            </div>
+        );
+    };
+
     const renderFilterContent = (key, filter) => {
         switch (filter.type) {
             case FILTER_TYPE.CHECKBOX:
                 return renderCheckboxFilter(key, filter);
             case FILTER_TYPE.RADIO:
                 return renderRadioFilter(key, filter);
-            // case FILTER_TYPE.RANGE:
-            //     return renderRangeFilter(key, filter);
+            case FILTER_TYPE.RANGE:
+                return renderRangeFilter(key, filter);
 
         }
     };

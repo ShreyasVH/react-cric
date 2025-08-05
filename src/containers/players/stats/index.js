@@ -12,7 +12,9 @@ import {
 import Filters from '../../filters';
 import { useNavigate } from 'react-router-dom';
 import { FILTER_TYPE } from "../../../constants";
-import { copyObject, showLoader, hideLoader } from "../../../utils";
+import { copyObject, showLoader, hideLoader } from '../../../utils';
+import { getAllTeams } from '../../../endpoints/teams';
+import { getAllStadiums } from '../../../endpoints/stadiums';
 
 import { styled } from '@mui/system';
 
@@ -46,6 +48,9 @@ const Container = styled("div")(({ theme }) => ({
     },
     '& .sortable': {
         cursor: 'pointer'
+    },
+    '& .clickable': {
+        cursor: 'pointer'
     }
 }));
 
@@ -62,7 +67,8 @@ export default function PlayerStats() {
     const [ sortMap, setSortMap ] = useState({
         'runs': 'desc'
     });
-    const filterOptions = {
+
+    const getDefaultFilterOptions = () => ({
         type: {
             displayName: 'Type',
             type: FILTER_TYPE.RADIO,
@@ -112,8 +118,13 @@ export default function PlayerStats() {
                     name: 'FRANCHISE'
                 }
             ]
+        },
+        year: {
+            displayName: 'Year',
+            type: FILTER_TYPE.RANGE
         }
-    }
+    });
+    const [ filterOptions, setFilterOptions ] = useState(getDefaultFilterOptions());
     const [ isFilterOpen, setIsFilterOpen ] = useState(false);
     const [ loaded, setLoaded ] = useState(false);
 
@@ -150,19 +161,15 @@ export default function PlayerStats() {
                     let index = tempFilters[key].indexOf(id);
                     tempFilters[key].splice(index, 1);
                 }
-
-            }
                 break;
+            }
             case FILTER_TYPE.RADIO: {
                 let key = target.dataset['key'];
                 let id = target.dataset['id'];
 
                 tempFilters[key] = id;
-                // this.setState({
-                //     selectedFiltersTemp: tempFilters
-                // });
-            }
                 break;
+            }
             case FILTER_TYPE.RANGE: {
                 console.log(target.dataset);
                 let key = target.dataset['key'];
@@ -171,11 +178,9 @@ export default function PlayerStats() {
                     tempFilters[key] = {};
                 }
                 tempFilters[key][type] = target.value;
-                this.setState({
-                    selectedFiltersTemp: tempFilters
-                });
-            }
                 break;
+            }
+            default: {}
         }
 
         setSelectedFiltersTemp(tempFilters);
@@ -312,8 +317,9 @@ export default function PlayerStats() {
                                 <TableCell>
                                     Name
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className='sortable' onClick={handleSort('innings')}>
                                     Innings
+                                    {renderSortSymbol('innings')}
                                 </TableCell>
                                 <TableCell className='sortable' onClick={handleSort('runs')}>
                                     Runs
@@ -323,23 +329,29 @@ export default function PlayerStats() {
                                     Balls
                                     {renderSortSymbol('balls')}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className='sortable' onClick={handleSort('notOuts')}>
                                     Notouts
+                                    {renderSortSymbol('notOuts')}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className='sortable' onClick={handleSort('highest')}>
                                     Highest
+                                    {renderSortSymbol('highest')}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className='sortable' onClick={handleSort('fours')}>
                                     4s
+                                    {renderSortSymbol('fours')}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className='sortable' onClick={handleSort('sixes')}>
                                     6s
+                                    {renderSortSymbol('sixes')}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className='sortable' onClick={handleSort('fifties')}>
                                     50s
+                                    {renderSortSymbol('fifties')}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className='sortable' onClick={handleSort('hundreds')}>
                                     100s
+                                    {renderSortSymbol('hundreds')}
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -350,7 +362,7 @@ export default function PlayerStats() {
                                     <TableCell>
                                         {stat.id}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className='clickable' onClick={handlePlayerClick(stat.id)}>
                                         {stat.name}
                                     </TableCell>
                                     <TableCell>
@@ -402,12 +414,33 @@ export default function PlayerStats() {
                                 <TableCell>
                                     Name
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className='sortable' onClick={handleSort('innings')}>
                                     Innings
+                                    {renderSortSymbol('innings')}
                                 </TableCell>
                                 <TableCell className='sortable' onClick={handleSort('wickets')}>
                                     Wickets
                                     {renderSortSymbol('wickets')}
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('runs')}>
+                                    Runs
+                                    {renderSortSymbol('runs')}
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('balls')}>
+                                    Balls
+                                    {renderSortSymbol('balls')}
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('maidens')}>
+                                    Maidens
+                                    {renderSortSymbol('maidens')}
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('fifers')}>
+                                    Fifers
+                                    {renderSortSymbol('fifers')}
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('tenWickets')}>
+                                    Ten Wickets
+                                    {renderSortSymbol('tenWickets')}
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -418,7 +451,7 @@ export default function PlayerStats() {
                                     <TableCell>
                                         {stat.id}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className='clickable' onClick={handlePlayerClick(stat.id)}>
                                         {stat.name}
                                     </TableCell>
                                     <TableCell>
@@ -426,6 +459,21 @@ export default function PlayerStats() {
                                     </TableCell>
                                     <TableCell>
                                         {stat.wickets}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.runs}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.balls}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.maidens}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.fifers}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.tenWickets}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -437,11 +485,38 @@ export default function PlayerStats() {
     };
 
     useEffect(() => {
-        updateData(1, sortMap);
-    }, []);
-
-    useEffect(() => {
-        Promise.all()
+        Promise.all([
+            updateData(1, sortMap),
+            getAllTeams(),
+            getAllStadiums()
+        ]).then(([_, allTeams, allStadiums]) => {
+            const updatedFilterOptions = copyObject(filterOptions);
+            updatedFilterOptions['team'] = {
+                displayName: 'Team',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allTeams.map(team => ({
+                    id: JSON.stringify(team.id),
+                    name: team.name
+                }))
+            };
+            updatedFilterOptions['opposingTeam'] = {
+                displayName: 'Opposing Team',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allTeams.map(team => ({
+                    id: JSON.stringify(team.id),
+                    name: team.name
+                }))
+            };
+            updatedFilterOptions['stadium'] = {
+                displayName: 'Stadium',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allStadiums.map(stadium => ({
+                    id: JSON.stringify(stadium.id),
+                    name: stadium.name
+                }))
+            };
+            setFilterOptions(updatedFilterOptions);
+        }).catch(error => console.log(error))
     }, []);
 
 
