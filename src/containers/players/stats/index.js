@@ -80,6 +80,10 @@ export default function PlayerStats() {
                 {
                     id: 'bowling',
                     name: 'Bowling'
+                },
+                {
+                    id: 'fielding',
+                    name: 'Fielding'
                 }
             ]
         },
@@ -222,9 +226,44 @@ export default function PlayerStats() {
             'year'
         ];
 
+        const allowedSortKeys = {
+            'batting': [
+                'runs',
+                'innings',
+                'balls',
+                'notOuts',
+                'highest',
+                'fours',
+                'sixes',
+                'fifties',
+                'hundreds'
+            ],
+            'bowling': [
+                'wickets',
+                'innings',
+                'runs',
+                'balls',
+                'maidens',
+                'fifers',
+                'tenWickets'
+            ],
+            'fielding': [
+                'fielderCatches',
+                'keeperCatches',
+                'stumpings',
+                'runOuts'
+            ]
+        };
+
         for (const [key, values] of Object.entries(selectedFiltersTemp)) {
             if (key === 'type') {
                 payload.type = values;
+                if (!allowedSortKeys[payload.type].includes(Object.keys(sortMap)[0])) {
+                    sortMap = {
+                        [allowedSortKeys[payload.type][0]]: 'desc'
+                    };
+                    payload.sortMap = sortMap;
+                }
             } else if (rangeFilterKeys.indexOf(key) !== -1) {
                 payload.rangeFilters[key] = values;
             } else {
@@ -484,6 +523,68 @@ export default function PlayerStats() {
         );
     };
 
+    const renderFieldingStats = () => {
+        return (
+            <>
+                {
+                    selectedFiltersTemp.type === 'fielding' && <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    Player ID
+                                </TableCell>
+                                <TableCell>
+                                    Name
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('fielderCatches')}>
+                                    Fielder Catches
+                                    {renderSortSymbol('fielderCatches')}
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('keeperCatches')}>
+                                    Keeper Catches
+                                    {renderSortSymbol('keeperCatches')}
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('stumpings')}>
+                                    Stumpings
+                                    {renderSortSymbol('stumpings')}
+                                </TableCell>
+                                <TableCell className='sortable' onClick={handleSort('runOuts')}>
+                                    Run Outs
+                                    {renderSortSymbol('runOuts')}
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+
+                        <TableBody>
+                            {stats.map(stat => (
+                                <TableRow key={stat.id}>
+                                    <TableCell>
+                                        {stat.id}
+                                    </TableCell>
+                                    <TableCell className='clickable' onClick={handlePlayerClick(stat.id)}>
+                                        {stat.name}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.fielderCatches}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.keeperCatches}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.stumpings}
+                                    </TableCell>
+                                    <TableCell>
+                                        {stat.runOuts}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                }
+            </>
+        );
+    };
+
     useEffect(() => {
         Promise.all([
             updateData(1, sortMap),
@@ -527,6 +628,7 @@ export default function PlayerStats() {
                 loaded && <Container>
                     {renderBattingStats()}
                     {renderBowlingStats()}
+                    {renderFieldingStats()}
                     <Filters
                         isOpen={isFilterOpen}
                         onFilterOpen={handleFilterOpen}
