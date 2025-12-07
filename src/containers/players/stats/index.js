@@ -352,7 +352,7 @@ export default function PlayerStats() {
         return (
             <>
                 {
-                    selectedFiltersTemp.type === 'batting' && <Table>
+                    selectedFilters.type === 'batting' && <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>
@@ -449,7 +449,7 @@ export default function PlayerStats() {
         return (
             <>
                 {
-                    selectedFiltersTemp.type === 'bowling' && <Table>
+                    selectedFilters.type === 'bowling' && <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>
@@ -532,7 +532,7 @@ export default function PlayerStats() {
         return (
             <>
                 {
-                    selectedFiltersTemp.type === 'fielding' && <Table>
+                    selectedFilters.type === 'fielding' && <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>
