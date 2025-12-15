@@ -163,6 +163,9 @@ export default function PlayerStats() {
                     let index = tempFilters[key].indexOf(id);
                     tempFilters[key].splice(index, 1);
                 }
+                if (tempFilters[key].length === 0) {
+                    delete tempFilters[key];
+                }
                 break;
             }
             case FILTER_TYPE.RADIO: {
@@ -534,6 +537,26 @@ export default function PlayerStats() {
         }).catch(error => console.log(error))
     }, []);
 
+    const handleClearFilter = key => {
+        let tempFilters = copyObject(selectedFiltersTemp);
+
+        delete tempFilters[key];
+
+        setSelectedFiltersTemp(tempFilters);
+    };
+
+    const handleClearAllFilters = () => {
+        let tempFilters = copyObject(selectedFiltersTemp);
+
+        for (const key of Object.keys(tempFilters)) {
+            if (key !== 'type') {
+                delete tempFilters[key];
+            }
+        }
+
+        setSelectedFiltersTemp(tempFilters);
+    };
+
     return (
         <>
             {
@@ -547,6 +570,8 @@ export default function PlayerStats() {
                         handleEvent={handleFilterEvent}
                         applyFilters={handleApplyFilters}
                         onFilterClose={handleFilterClose}
+                        clearFilter={handleClearFilter}
+                        clearAllFilters={handleClearAllFilters}
                     />
 
                     {renderPagination()}
