@@ -209,11 +209,6 @@ export default function PlayerStats() {
 
     const columns = {
         batting: [
-            // {
-            //     displayKey: 'Player ID',
-            //     key: 'id',
-            //     sortable: false
-            // },
             {
                 displayKey: 'Name',
                 key: 'name',
@@ -266,11 +261,6 @@ export default function PlayerStats() {
             }
         ],
         bowling: [
-            // {
-            //     displayKey: 'Player ID',
-            //     key: 'id',
-            //     sortable: false
-            // },
             {
                 displayKey: 'Name',
                 key: 'name',
@@ -313,11 +303,6 @@ export default function PlayerStats() {
             }
         ],
         fielding: [
-            // {
-            //     displayKey: 'Player ID',
-            //     key: 'id',
-            //     sortable: false
-            // },
             {
                 displayKey: 'Name',
                 key: 'name',
