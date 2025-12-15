@@ -1,10 +1,8 @@
-import {Alert, CircularProgress, Dialog} from '@mui/material';
+import { CircularProgress, Dialog } from '@mui/material';
 import { useState } from "react";
 
 export default function Loader () {
     const [ visible, setVisible ] = useState(false);
-    const [ message, setMessage ] = useState('');
-    const [ severity, setSeverity ] = useState('');
 
     window.addEventListener('show-loader', function(event) {
         setVisible(true);
@@ -17,7 +15,7 @@ export default function Loader () {
     return (
         <>
             {
-                visible && <Dialog open={true}>
+                visible && <Dialog open={true} PaperProps={{sx: {backgroundColor: 'transparent', boxShadow: 'none'}}}>
                     <CircularProgress />
                 </Dialog>
             }

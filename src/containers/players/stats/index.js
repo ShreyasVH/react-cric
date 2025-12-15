@@ -145,8 +145,6 @@ export default function PlayerStats() {
         const target = event.target;
         let tempFilters = copyObject(selectedFiltersTemp);
 
-        console.log(event);
-
         switch (event.target.dataset.type) {
             case FILTER_TYPE.CHECKBOX: {
                 let key = target.dataset['key'];
@@ -175,7 +173,6 @@ export default function PlayerStats() {
                 break;
             }
             case FILTER_TYPE.RANGE: {
-                console.log(target.dataset);
                 let key = target.dataset['key'];
                 let type = target.dataset['rangetype'];
                 if (!tempFilters.hasOwnProperty(key)) {
@@ -209,6 +206,145 @@ export default function PlayerStats() {
     };
 
     const limit = 10;
+
+    const columns = {
+        batting: [
+            // {
+            //     displayKey: 'Player ID',
+            //     key: 'id',
+            //     sortable: false
+            // },
+            {
+                displayKey: 'Name',
+                key: 'name',
+                sortable: false
+            },
+            {
+                displayKey: 'Innings',
+                key: 'innings',
+                sortable: true
+            },
+            {
+                displayKey: 'Runs',
+                key: 'runs',
+                sortable: true
+            },
+            {
+                displayKey: 'Balls',
+                key: 'balls',
+                sortable: true
+            },
+            {
+                displayKey: 'Not Outs',
+                key: 'notOuts',
+                sortable: true
+            },
+            {
+                displayKey: 'Highest',
+                key: 'highest',
+                sortable: true
+            },
+            {
+                displayKey: '4s',
+                key: 'fours',
+                sortable: true
+            },
+            {
+                displayKey: '6s',
+                key: 'sixes',
+                sortable: true
+            },
+            {
+                displayKey: '50s',
+                key: 'fifties',
+                sortable: true
+            },
+            {
+                displayKey: '100s',
+                key: 'hundreds',
+                sortable: true
+            }
+        ],
+        bowling: [
+            // {
+            //     displayKey: 'Player ID',
+            //     key: 'id',
+            //     sortable: false
+            // },
+            {
+                displayKey: 'Name',
+                key: 'name',
+                sortable: false
+            },
+            {
+                displayKey: 'Innings',
+                key: 'innings',
+                sortable: true
+            },
+            {
+                displayKey: 'Wickets',
+                key: 'wickets',
+                sortable: true
+            },
+            {
+                displayKey: 'Runs',
+                key: 'runs',
+                sortable: true
+            },
+            {
+                displayKey: 'Balls',
+                key: 'balls',
+                sortable: true
+            },
+            {
+                displayKey: 'Maidens',
+                key: 'maidens',
+                sortable: true
+            },
+            {
+                displayKey: 'fifers',
+                key: 'fifers',
+                sortable: true
+            },
+            {
+                displayKey: 'Ten Wickets',
+                key: 'tenWickets',
+                sortable: true
+            }
+        ],
+        fielding: [
+            // {
+            //     displayKey: 'Player ID',
+            //     key: 'id',
+            //     sortable: false
+            // },
+            {
+                displayKey: 'Name',
+                key: 'name',
+                sortable: false
+            },
+            {
+                displayKey: 'Fielder Catches',
+                key: 'fielderCatches',
+                sortable: true
+            },
+            {
+                displayKey: 'Keeper Catches',
+                key: 'keeperCatches',
+                sortable: true
+            },
+            {
+                displayKey: 'Stumpings',
+                key: 'stumpings',
+                sortable: true
+            },
+            {
+                displayKey: 'Run Outs',
+                key: 'runOuts',
+                sortable: true
+            }
+        ]
+    };
 
     const updateData = (selectedPage, sortMap) => {
         showLoader();
@@ -343,244 +479,37 @@ export default function PlayerStats() {
 
     const renderSortSymbol = key => ((sortMap.hasOwnProperty(key)) ? ((sortMap[key] === 'asc') ? '\u0020\u2191' : '\u0020\u2193') : '');
 
-    const renderBattingStats = () => {
+    const renderStats = () => {
         return (
             <>
-                {
-                    selectedFiltersTemp.type === 'batting' && <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    Player ID
+                <Table>
+                    <TableHead sx={{
+                        "& .MuiTableCell-head": {
+                            fontWeight: 600
+                        },
+                    }}>
+                        <TableRow>
+                            {columns[selectedFilters.type].map(column => (
+                                <TableCell className={[column.sortable && 'sortable']} onClick={handleSort(column.key, selectedFilters.type)}>
+                                    {column.displayKey}
+                                    {renderSortSymbol(column.key)}
                                 </TableCell>
-                                <TableCell>
-                                    Name
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('innings')}>
-                                    Innings
-                                    {renderSortSymbol('innings')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('runs')}>
-                                    Runs
-                                    {renderSortSymbol('runs')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('balls')}>
-                                    Balls
-                                    {renderSortSymbol('balls')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('notOuts')}>
-                                    Notouts
-                                    {renderSortSymbol('notOuts')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('highest')}>
-                                    Highest
-                                    {renderSortSymbol('highest')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('fours')}>
-                                    4s
-                                    {renderSortSymbol('fours')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('sixes')}>
-                                    6s
-                                    {renderSortSymbol('sixes')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('fifties')}>
-                                    50s
-                                    {renderSortSymbol('fifties')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('hundreds')}>
-                                    100s
-                                    {renderSortSymbol('hundreds')}
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {stats.map(stat => (
-                                <TableRow key={stat.id}>
-                                    <TableCell>
-                                        {stat.id}
-                                    </TableCell>
-                                    <TableCell className='clickable' onClick={handlePlayerClick(stat.id)}>
-                                        {stat.name}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.innings}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.runs}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.balls}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.notOuts}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.highest}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.fours}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.sixes}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.fifties}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.hundreds}
-                                    </TableCell>
-                                </TableRow>
                             ))}
-                        </TableBody>
-                    </Table>
-                }
-            </>
-        );
-    };
+                        </TableRow>
+                    </TableHead>
 
-    const renderBowlingStats = () => {
-        return (
-            <>
-                {
-                    selectedFiltersTemp.type === 'bowling' && <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    Player ID
-                                </TableCell>
-                                <TableCell>
-                                    Name
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('innings')}>
-                                    Innings
-                                    {renderSortSymbol('innings')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('wickets')}>
-                                    Wickets
-                                    {renderSortSymbol('wickets')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('runs')}>
-                                    Runs
-                                    {renderSortSymbol('runs')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('balls')}>
-                                    Balls
-                                    {renderSortSymbol('balls')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('maidens')}>
-                                    Maidens
-                                    {renderSortSymbol('maidens')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('fifers')}>
-                                    Fifers
-                                    {renderSortSymbol('fifers')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('tenWickets')}>
-                                    Ten Wickets
-                                    {renderSortSymbol('tenWickets')}
-                                </TableCell>
+                    <TableBody>
+                        {stats.map(stat => (
+                            <TableRow key={stat.id}>
+                                {columns[selectedFilters.type].map(column => (
+                                    <TableCell>
+                                        {stat[column.key]}
+                                    </TableCell>
+                                ))}
                             </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {stats.map(stat => (
-                                <TableRow key={stat.id}>
-                                    <TableCell>
-                                        {stat.id}
-                                    </TableCell>
-                                    <TableCell className='clickable' onClick={handlePlayerClick(stat.id)}>
-                                        {stat.name}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.innings}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.wickets}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.runs}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.balls}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.maidens}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.fifers}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.tenWickets}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                }
-            </>
-        );
-    };
-
-    const renderFieldingStats = () => {
-        return (
-            <>
-                {
-                    selectedFiltersTemp.type === 'fielding' && <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    Player ID
-                                </TableCell>
-                                <TableCell>
-                                    Name
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('fielderCatches')}>
-                                    Fielder Catches
-                                    {renderSortSymbol('fielderCatches')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('keeperCatches')}>
-                                    Keeper Catches
-                                    {renderSortSymbol('keeperCatches')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('stumpings')}>
-                                    Stumpings
-                                    {renderSortSymbol('stumpings')}
-                                </TableCell>
-                                <TableCell className='sortable' onClick={handleSort('runOuts')}>
-                                    Run Outs
-                                    {renderSortSymbol('runOuts')}
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {stats.map(stat => (
-                                <TableRow key={stat.id}>
-                                    <TableCell>
-                                        {stat.id}
-                                    </TableCell>
-                                    <TableCell className='clickable' onClick={handlePlayerClick(stat.id)}>
-                                        {stat.name}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.fielderCatches}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.keeperCatches}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.stumpings}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.runOuts}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                }
+                        ))}
+                    </TableBody>
+                </Table>
             </>
         );
     };
@@ -620,15 +549,11 @@ export default function PlayerStats() {
         }).catch(error => console.log(error))
     }, []);
 
-
-
     return (
         <>
             {
                 loaded && <Container>
-                    {renderBattingStats()}
-                    {renderBowlingStats()}
-                    {renderFieldingStats()}
+                    {renderStats()}
                     <Filters
                         isOpen={isFilterOpen}
                         onFilterOpen={handleFilterOpen}
