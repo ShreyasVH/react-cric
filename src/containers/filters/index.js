@@ -42,9 +42,7 @@ export default function Filters(props) {
                 sx={{position: 'fixed', bottom: '16px', right: '16px'}}
             >
 
-                <IconButton>
-                    <FilterList />
-                </IconButton>
+                <FilterList />
             </Fab>
         );
     };

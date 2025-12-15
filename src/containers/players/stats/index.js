@@ -478,7 +478,7 @@ export default function PlayerStats() {
                     }}>
                         <TableRow>
                             {columns[selectedFilters.type].map(column => (
-                                <TableCell className={[column.sortable && 'sortable']} onClick={handleSort(column.key, selectedFilters.type)}>
+                                <TableCell key={column.key} className={column.sortable ? 'sortable': ''} onClick={handleSort(column.key, selectedFilters.type)}>
                                     {column.displayKey}
                                     {renderSortSymbol(column.key)}
                                 </TableCell>
@@ -490,7 +490,7 @@ export default function PlayerStats() {
                         {stats.map(stat => (
                             <TableRow key={stat.id}>
                                 {columns[selectedFilters.type].map(column => (
-                                    <TableCell>
+                                    <TableCell key={`${column.key}_${stat.id}`}>
                                         {stat[column.key]}
                                     </TableCell>
                                 ))}
