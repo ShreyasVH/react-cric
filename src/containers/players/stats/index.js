@@ -15,37 +15,11 @@ import { FILTER_TYPE } from "../../../constants";
 import { copyObject, showLoader, hideLoader } from '../../../utils';
 import { getAllTeams } from '../../../endpoints/teams';
 import { getAllStadiums } from '../../../endpoints/stadiums';
+import PaginationBox from './paginationBox';
 
 import { styled } from '@mui/system';
 
 const Container = styled("div")(({ theme }) => ({
-    '& .paginationBox': {
-        textAlign: 'center',
-        marginTop: '2%',
-        '& .active': {
-            backgroundColor: '#303F9F',
-            color: '#FFFFFF',
-            border: '1px solid #303F9F',
-            borderRadius: '10%'
-        }
-    },
-    '& .paginationButton': {
-        display: 'inline-block',
-        padding: '1% 1.5%',
-        cursor: 'pointer',
-        fontWeight: 'large',
-        marginLeft: '0.25%',
-        marginRight: '0.25%',
-        borderRadius: 0,
-        '&:hover': {
-            [theme.breakpoints.up('lg')]: {
-                backgroundColor: '#303F9F',
-                color: '#FFFFFF',
-                border: '1px solid #303F9F',
-                borderRadius: '10%'
-            }
-        }
-    },
     '& .sortable': {
         cursor: 'pointer'
     },
@@ -411,60 +385,6 @@ export default function PlayerStats() {
         await updateData(page, sortMap);
     };
 
-    const renderPagination = () => {
-        const currentPage = page;
-        const totalPages = (((totalCount - (totalCount % limit)) / limit) + (((totalCount % limit) === 0) ? 0 : 1));
-        const markup = [];
-
-        if (currentPage > 2) {
-            markup.push(
-                <div className='paginationButton' onClick={() => goToPage(1)} key={'pageFirst'}>
-                    {'<<'}
-                </div>
-            );
-        }
-
-        if (currentPage > 1) {
-            markup.push(
-                <div className='paginationButton' onClick={() => goToPage(currentPage - 1)} key={'pagePrevious'}>
-                    {'<'}
-                </div>
-            );
-        }
-
-        for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
-            let className = 'paginationButton' + ((i === currentPage) ? ' ' + 'active' : '');
-
-            markup.push(
-                <div className={className} onClick={() => goToPage(i)} key={'page' + i}>
-                    {i}
-                </div>
-            );
-        }
-
-        if (currentPage < (totalPages - 1)) {
-            markup.push(
-                <div className='paginationButton' onClick={() => goToPage(currentPage + 1)} key={'pageNext'}>
-                    {'>'}
-                </div>
-            );
-        }
-
-        if (currentPage < (totalPages - 2)) {
-            markup.push(
-                <div className='paginationButton' onClick={() => goToPage(totalPages)} key={'pageLast'}>
-                    {'>>'}
-                </div>
-            );
-        }
-
-        return (
-            <div className='paginationBox'>
-                {markup}
-            </div>
-        );
-    }
-
     const renderSortSymbol = key => ((sortMap.hasOwnProperty(key)) ? ((sortMap[key] === 'asc') ? '\u0020\u2191' : '\u0020\u2193') : '');
 
     const renderStats = () => {
@@ -574,7 +494,12 @@ export default function PlayerStats() {
                         clearAllFilters={handleClearAllFilters}
                     />
 
-                    {renderPagination()}
+                    <PaginationBox
+                        page={page}
+                        totalCount={totalCount}
+                        limit={limit}
+                        goToPage={goToPage}
+                    />
 
                 </Container>
             }
