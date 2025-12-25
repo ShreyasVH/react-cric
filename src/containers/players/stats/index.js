@@ -1,14 +1,5 @@
 import { useEffect, useState } from 'react';
 import { getStats } from '../../../endpoints/players';
-import {
-    Chip,
-    Paper,
-    Table, TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    Typography
-} from '@mui/material';
 import Filters from '../../filters';
 import { useNavigate } from 'react-router-dom';
 import { FILTER_TYPE } from "../../../constants";
@@ -16,32 +7,9 @@ import { copyObject, showLoader, hideLoader } from '../../../utils';
 import { getAllTeams } from '../../../endpoints/teams';
 import { getAllStadiums } from '../../../endpoints/stadiums';
 import PaginationBox from './paginationBox';
-
-import { styled } from '@mui/system';
-
-const Container = styled("div")(({ theme }) => ({
-    '& .sortable': {
-        cursor: 'pointer'
-    },
-    '& .clickable': {
-        cursor: 'pointer'
-    }
-}));
+import StatsTable from './statsTable';
 
 export default function PlayerStats() {
-    const [ stats, setStats ] = useState([]);
-    const [ totalCount, setTotalCount ] = useState(0);
-    const [ selectedFilters, setSelectedFilters ] = useState({
-        type: 'batting'
-    });
-    const [ page, setPage ] = useState(1);
-    const [ selectedFiltersTemp, setSelectedFiltersTemp ] = useState({
-        type: 'batting'
-    });
-    const [ sortMap, setSortMap ] = useState({
-        'runs': 'desc'
-    });
-
     const getDefaultFilterOptions = () => ({
         type: {
             displayName: 'Type',
@@ -102,88 +70,24 @@ export default function PlayerStats() {
             type: FILTER_TYPE.RANGE
         }
     });
-    const [ filterOptions, setFilterOptions ] = useState(getDefaultFilterOptions());
-    const [ isFilterOpen, setIsFilterOpen ] = useState(false);
+
     const [ loaded, setLoaded ] = useState(false);
-
-    const handlePlayerClick = playerId => e => {
-        console.log(playerId);
-        // navigate('/')
-    };
-
-    const handleApplyFilters = async () => {
-        await updateData(1, sortMap);
-    };
-
-    const handleFilterEvent = event => {
-        const target = event.target;
-        let tempFilters = copyObject(selectedFiltersTemp);
-
-        switch (event.target.dataset.type) {
-            case FILTER_TYPE.CHECKBOX: {
-                let key = target.dataset['key'];
-                let id = target.dataset['id'];
-                let checked = target.checked;
-
-                if (checked) {
-                    if (tempFilters.hasOwnProperty(key)) {
-                        tempFilters[key].push(id);
-                    } else {
-                        tempFilters[key] = [
-                            id
-                        ];
-                    }
-                } else {
-                    let index = tempFilters[key].indexOf(id);
-                    tempFilters[key].splice(index, 1);
-                }
-                if (tempFilters[key].length === 0) {
-                    delete tempFilters[key];
-                }
-                break;
-            }
-            case FILTER_TYPE.RADIO: {
-                let key = target.dataset['key'];
-                let id = target.dataset['id'];
-
-                tempFilters[key] = id;
-                break;
-            }
-            case FILTER_TYPE.RANGE: {
-                let key = target.dataset['key'];
-                let type = target.dataset['rangetype'];
-                if (!tempFilters.hasOwnProperty(key)) {
-                    tempFilters[key] = {};
-                }
-                tempFilters[key][type] = target.value;
-                break;
-            }
-            default: {}
-        }
-
-        setSelectedFiltersTemp(tempFilters);
-    };
-
-    const handleFilterOpen = event => {
-        setIsFilterOpen(true);
-        setSelectedFiltersTemp(selectedFilters);
-    };
-
-    const handleFilterClose = event => {
-        setIsFilterOpen(false);
-    };
-
-    const handleSort = key => async event => {
-        event.preventDefault();
-
-        const order = ((sortMap.hasOwnProperty(key) && sortMap[key] === 'desc') ? 'asc' : 'desc');
-        await updateData(1, {
-            [key]: order
-        });
-    };
+    const [ isFilterOpen, setIsFilterOpen ] = useState(false);
+    const [ filterOptions, setFilterOptions ] = useState(getDefaultFilterOptions());
+    const [ stats, setStats ] = useState([]);
+    const [ totalCount, setTotalCount ] = useState(0);
+    const [ selectedFilters, setSelectedFilters ] = useState({
+        type: 'batting'
+    });
+    const [ selectedFiltersTemp, setSelectedFiltersTemp ] = useState({
+        type: 'batting'
+    });
+    const [ sortMap, setSortMap ] = useState({
+        'runs': 'desc'
+    });
+    const [ page, setPage ] = useState(1);
 
     const limit = 10;
-
     const columns = {
         batting: [
             {
@@ -308,6 +212,46 @@ export default function PlayerStats() {
         ]
     };
 
+    const handlePlayerClick = playerId => e => {
+        console.log(playerId);
+        // navigate('/')
+    };
+
+    useEffect(() => {
+        Promise.all([
+            updateData(1, sortMap),
+            getAllTeams(),
+            getAllStadiums()
+        ]).then(([_, allTeams, allStadiums]) => {
+            const updatedFilterOptions = copyObject(filterOptions);
+            updatedFilterOptions['team'] = {
+                displayName: 'Team',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allTeams.map(team => ({
+                    id: JSON.stringify(team.id),
+                    name: team.name
+                }))
+            };
+            updatedFilterOptions['opposingTeam'] = {
+                displayName: 'Opposing Team',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allTeams.map(team => ({
+                    id: JSON.stringify(team.id),
+                    name: team.name
+                }))
+            };
+            updatedFilterOptions['stadium'] = {
+                displayName: 'Stadium',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allStadiums.map(stadium => ({
+                    id: JSON.stringify(stadium.id),
+                    name: stadium.name
+                }))
+            };
+            setFilterOptions(updatedFilterOptions);
+        }).catch(error => console.log(error))
+    }, []);
+
     const updateData = (selectedPage, sortMap) => {
         showLoader();
 
@@ -381,81 +325,67 @@ export default function PlayerStats() {
         });
     };
 
-    const goToPage = async page => {
-        await updateData(page, sortMap);
+    const handleFilterOpen = event => {
+        setIsFilterOpen(true);
+        setSelectedFiltersTemp(selectedFilters);
     };
 
-    const renderSortSymbol = key => ((sortMap.hasOwnProperty(key)) ? ((sortMap[key] === 'asc') ? '\u0020\u2191' : '\u0020\u2193') : '');
-
-    const renderStats = () => {
-        return (
-            <>
-                <Table>
-                    <TableHead sx={{
-                        "& .MuiTableCell-head": {
-                            fontWeight: 600
-                        },
-                    }}>
-                        <TableRow>
-                            {columns[selectedFilters.type].map(column => (
-                                <TableCell key={column.key} className={column.sortable ? 'sortable': ''} onClick={handleSort(column.key, selectedFilters.type)}>
-                                    {column.displayKey}
-                                    {renderSortSymbol(column.key)}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        {stats.map(stat => (
-                            <TableRow key={stat.id}>
-                                {columns[selectedFilters.type].map(column => (
-                                    <TableCell key={`${column.key}_${stat.id}`}>
-                                        {stat[column.key]}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </>
-        );
+    const handleFilterClose = event => {
+        setIsFilterOpen(false);
     };
 
-    useEffect(() => {
-        Promise.all([
-            updateData(1, sortMap),
-            getAllTeams(),
-            getAllStadiums()
-        ]).then(([_, allTeams, allStadiums]) => {
-            const updatedFilterOptions = copyObject(filterOptions);
-            updatedFilterOptions['team'] = {
-                displayName: 'Team',
-                type: FILTER_TYPE.CHECKBOX,
-                values: allTeams.map(team => ({
-                    id: JSON.stringify(team.id),
-                    name: team.name
-                }))
-            };
-            updatedFilterOptions['opposingTeam'] = {
-                displayName: 'Opposing Team',
-                type: FILTER_TYPE.CHECKBOX,
-                values: allTeams.map(team => ({
-                    id: JSON.stringify(team.id),
-                    name: team.name
-                }))
-            };
-            updatedFilterOptions['stadium'] = {
-                displayName: 'Stadium',
-                type: FILTER_TYPE.CHECKBOX,
-                values: allStadiums.map(stadium => ({
-                    id: JSON.stringify(stadium.id),
-                    name: stadium.name
-                }))
-            };
-            setFilterOptions(updatedFilterOptions);
-        }).catch(error => console.log(error))
-    }, []);
+    const handleApplyFilters = async () => {
+        await updateData(1, sortMap);
+    };
+
+    const handleFilterEvent = event => {
+        const target = event.target;
+        let tempFilters = copyObject(selectedFiltersTemp);
+
+        switch (event.target.dataset.type) {
+            case FILTER_TYPE.CHECKBOX: {
+                let key = target.dataset['key'];
+                let id = target.dataset['id'];
+                let checked = target.checked;
+
+                if (checked) {
+                    if (tempFilters.hasOwnProperty(key)) {
+                        tempFilters[key].push(id);
+                    } else {
+                        tempFilters[key] = [
+                            id
+                        ];
+                    }
+                } else {
+                    let index = tempFilters[key].indexOf(id);
+                    tempFilters[key].splice(index, 1);
+                }
+                if (tempFilters[key].length === 0) {
+                    delete tempFilters[key];
+                }
+                break;
+            }
+            case FILTER_TYPE.RADIO: {
+                let key = target.dataset['key'];
+                let id = target.dataset['id'];
+
+                tempFilters[key] = id;
+                break;
+            }
+            case FILTER_TYPE.RANGE: {
+                let key = target.dataset['key'];
+                let type = target.dataset['rangetype'];
+                if (!tempFilters.hasOwnProperty(key)) {
+                    tempFilters[key] = {};
+                }
+                tempFilters[key][type] = target.value;
+                break;
+            }
+            default: {}
+        }
+
+        setSelectedFiltersTemp(tempFilters);
+    };
 
     const handleClearFilter = key => {
         let tempFilters = copyObject(selectedFiltersTemp);
@@ -477,11 +407,41 @@ export default function PlayerStats() {
         setSelectedFiltersTemp(tempFilters);
     };
 
+    const goToPage = async page => {
+        await updateData(page, sortMap);
+    };
+
+    const handleSort = (key, type) => event => {
+        event.preventDefault();
+
+        const columnConfig = columns[type].filter(column => key === column.key);
+        if (columnConfig.length === 1 && columnConfig[0].sortable) {
+            const order = ((sortMap.hasOwnProperty(key) && sortMap[key] === 'desc') ? 'asc' : 'desc');
+            updateData(1, {
+                [key]: order
+            });
+        }
+    };
+
     return (
         <>
             {
-                loaded && <Container>
-                    {renderStats()}
+                loaded && <div>
+                    <StatsTable
+                        columns={columns}
+                        selectedFilters={selectedFilters}
+                        stats={stats}
+                        sortMap={sortMap}
+                        handleSort={handleSort}
+                    />
+
+                    <PaginationBox
+                        page={page}
+                        totalCount={totalCount}
+                        limit={limit}
+                        goToPage={goToPage}
+                    />
+
                     <Filters
                         isOpen={isFilterOpen}
                         onFilterOpen={handleFilterOpen}
@@ -493,15 +453,7 @@ export default function PlayerStats() {
                         clearFilter={handleClearFilter}
                         clearAllFilters={handleClearAllFilters}
                     />
-
-                    <PaginationBox
-                        page={page}
-                        totalCount={totalCount}
-                        limit={limit}
-                        goToPage={goToPage}
-                    />
-
-                </Container>
+                </div>
             }
         </>
     );
