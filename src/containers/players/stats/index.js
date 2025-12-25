@@ -271,41 +271,13 @@ export default function PlayerStats() {
             'year'
         ];
 
-        const allowedSortKeys = {
-            'batting': [
-                'runs',
-                'innings',
-                'balls',
-                'notOuts',
-                'highest',
-                'fours',
-                'sixes',
-                'fifties',
-                'hundreds'
-            ],
-            'bowling': [
-                'wickets',
-                'innings',
-                'runs',
-                'balls',
-                'maidens',
-                'fifers',
-                'tenWickets'
-            ],
-            'fielding': [
-                'fielderCatches',
-                'keeperCatches',
-                'stumpings',
-                'runOuts'
-            ]
-        };
-
         for (const [key, values] of Object.entries(selectedFiltersTemp)) {
             if (key === 'type') {
                 payload.type = values;
-                if (!allowedSortKeys[payload.type].includes(Object.keys(sortMap)[0])) {
+                const allowedSortKeys = columns[payload.type].filter(c => c.sortable).map(c => c.key);
+                if (!allowedSortKeys.includes(Object.keys(sortMap)[0])) {
                     sortMap = {
-                        [allowedSortKeys[payload.type][0]]: 'desc'
+                        [allowedSortKeys[1]]: 'desc'
                     };
                     payload.sortMap = sortMap;
                 }
