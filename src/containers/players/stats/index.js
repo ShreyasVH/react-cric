@@ -146,7 +146,8 @@ export default function PlayerStats() {
             {
                 displayKey: 'Name',
                 key: 'name',
-                sortable: false
+                sortable: false,
+                clickable: true
             },
             {
                 displayKey: 'Innings',
@@ -188,7 +189,8 @@ export default function PlayerStats() {
             {
                 displayKey: 'Name',
                 key: 'name',
-                sortable: false
+                sortable: false,
+                clickable: true
             },
             {
                 displayKey: 'Fielder Catches',
