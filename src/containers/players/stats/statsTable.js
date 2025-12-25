@@ -4,6 +4,10 @@ import { styled } from "@mui/system";
 const Container = styled("div")(({ theme }) => ({
     '& .sortable': {
         cursor: 'pointer'
+    },
+    '& .clickable': {
+        cursor: 'pointer',
+        color: '#42a5f5'
     }
 }));
 
@@ -15,6 +19,8 @@ export default function StatsTable(props) {
     const handleSort = props.handleSort;
 
     const renderSortSymbol = key => ((sortMap.hasOwnProperty(key)) ? ((sortMap[key] === 'asc') ? '\u0020\u2191' : '\u0020\u2193') : '');
+
+    const handleValueClick = (key, id) => props.onValueClick && props.onValueClick(key, id);
 
     return (
         <Container>
@@ -42,7 +48,11 @@ export default function StatsTable(props) {
                     {stats.map(stat => (
                         <TableRow key={stat.id}>
                             {columns[selectedFilters.type].map(column => (
-                                <TableCell key={`${column.key}_${stat.id}`}>
+                                <TableCell
+                                    key={`${column.key}_${stat.id}`}
+                                    className={column.clickable ? 'clickable': ''}
+                                    onClick={() => handleValueClick(column.key, stat.id)}
+                                >
                                     {stat[column.key]}
                                 </TableCell>
                             ))}

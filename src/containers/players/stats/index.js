@@ -93,7 +93,8 @@ export default function PlayerStats() {
             {
                 displayKey: 'Name',
                 key: 'name',
-                sortable: false
+                sortable: false,
+                clickable: true
             },
             {
                 displayKey: 'Innings',
@@ -212,7 +213,7 @@ export default function PlayerStats() {
         ]
     };
 
-    const handlePlayerClick = playerId => e => {
+    const handlePlayerClick = playerId => {
         console.log(playerId);
         // navigate('/')
     };
@@ -423,6 +424,12 @@ export default function PlayerStats() {
         }
     };
 
+    const handleValueClick = (key, id) => {
+        if (key === 'name') {
+            handlePlayerClick(id);
+        }
+    };
+
     return (
         <>
             {
@@ -433,6 +440,7 @@ export default function PlayerStats() {
                         stats={stats}
                         sortMap={sortMap}
                         handleSort={handleSort}
+                        onValueClick={handleValueClick}
                     />
 
                     <PaginationBox
