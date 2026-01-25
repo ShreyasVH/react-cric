@@ -4,3 +4,4 @@ node_modules
 build
 npmInstall.log
 compile.log
+server.log
