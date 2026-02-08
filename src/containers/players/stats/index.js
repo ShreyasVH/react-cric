@@ -231,7 +231,7 @@ export default function PlayerStats() {
                 displayName: 'Team',
                 type: FILTER_TYPE.CHECKBOX,
                 values: allTeams.map(team => ({
-                    id: JSON.stringify(team.id),
+                    id: ((typeof team.id === 'string') ? team.id : JSON.stringify(team.id)),
                     name: team.name
                 }))
             };
@@ -239,7 +239,7 @@ export default function PlayerStats() {
                 displayName: 'Opposing Team',
                 type: FILTER_TYPE.CHECKBOX,
                 values: allTeams.map(team => ({
-                    id: JSON.stringify(team.id),
+                    id: ((typeof team.id === 'string') ? team.id : JSON.stringify(team.id)),
                     name: team.name
                 }))
             };
@@ -247,7 +247,7 @@ export default function PlayerStats() {
                 displayName: 'Stadium',
                 type: FILTER_TYPE.CHECKBOX,
                 values: allStadiums.map(stadium => ({
-                    id: JSON.stringify(stadium.id),
+                    id: ((typeof stadium.id === 'string') ? stadium.id : JSON.stringify(stadium.id)),
                     name: stadium.name
                 }))
             };
