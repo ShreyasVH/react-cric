@@ -5,6 +5,9 @@ import Grid from '@mui/material/Grid';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { getDetails as getPlayerDetails } from '../../../endpoints/players';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
 export default function TourDetails() {
     const [ details, setDetails ] = useState({});
@@ -111,13 +114,72 @@ export default function TourDetails() {
     const getDateOfBirth = dateOfBirthString => {
         const dateOfBirth = new Date(dateOfBirthString);
         return ("0" + dateOfBirth.getDate()).slice(-2) + '/' + ("0" + (dateOfBirth.getMonth() + 1)).slice(-2) + '/' + dateOfBirth.getFullYear();
+    };
+
+    const formatDismissalStatsForRender = (stats) => {
+        const colorMap = {
+            Bowled: {
+                backgroundColor: '#a6cee3'
+            },
+            Caught: {
+                backgroundColor: '#1f78b4'
+            },
+            LBW: {
+                backgroundColor: '#b2df8a'
+            },
+            'Run Out': {
+                backgroundColor: '#33a02c'
+            },
+            Stumped: {
+                backgroundColor: '#fb9a99'
+            },
+            'Hit Twice': {
+                backgroundColor: '#e31a1c'
+            },
+            'Hit Wicket': {
+                backgroundColor: '#fdbf6f'
+            },
+            'Obstructing the Field': {
+                backgroundColor: '#ff7f00'
+            },
+            'Timed Out': {
+                backgroundColor: '#cab2d6'
+            },
+            'Handled the Ball': {
+                backgroundColor: '#6a3d9a'
+            }
+        };
+
+        let labels = [];
+        let data = [];
+        let backgroundColors = [];
+        let hoverBackgroundColors = [];
+        for (const [dismissal, count] of Object.entries(stats)) {
+            labels.push(dismissal);
+            data.push(count);
+            backgroundColors.push(colorMap[dismissal].backgroundColor);
+            hoverBackgroundColors.push(colorMap[dismissal].hoverBackgroundColor);
+        }
+
+        return (
+            {
+                labels,
+                datasets: [
+                    {
+                        backgroundColor: backgroundColors,
+                        hoverBackgroundColor: hoverBackgroundColors,
+                        data
+                    }
+                ]
+            }
+        );
     }
 
     return (
         <>
             {
                 loaded && <div>
-                    Player Details
+                    <h1>Player Details</h1>
 
                     <Grid container sx={{textAlign: 'center'}}>
                         {Object.keys(details.battingStats).map(gameType => (
@@ -160,6 +222,43 @@ export default function TourDetails() {
                                         </Grid>
                                     </CardContent>
                                 </Card>
+                            </Grid>))}
+                    </Grid>
+
+                    <br />
+                    <hr />
+                    <br />
+
+                    <h2>Dismissal Stats</h2>
+
+                    <Grid container sx={{textAlign: 'center'}}>
+                        {Object.keys(details.dismissalStats).map(gameType => (
+                            <Grid size={{xs: 4}} key={`dismissals_${gameType}`}>
+                                <Doughnut
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            title: {
+                                                display: true,
+                                                text: gameType,
+                                                font: {
+                                                    size: 18,
+                                                    weight: 'bold',
+                                                }
+                                            },
+                                            legend: {
+                                                display: true,
+                                                position: 'bottom'
+                                            }
+                                        }
+                                    }}
+                                    data={formatDismissalStatsForRender(details.dismissalStats[gameType])}
+                                    chart-id={`dismissals_${gameType}`}
+                                    dataset-id-key={`dismissals_${gameType}`}
+                                    width={400}
+                                    height={400}
+                                />
                             </Grid>))}
                     </Grid>
                 </div>
