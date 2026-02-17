@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
-import { CardActionArea, CardContent, Typography } from '@mui/material';
+import { CardContent, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
 import { getDetails as getPlayerDetails } from '../../../endpoints/players';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
@@ -87,7 +85,7 @@ export default function TourDetails() {
 
 
     const formatValue = (value, field) => {
-        let formattedValue = value;
+        let formattedValue;
 
         switch (field) {
             case 'average':
@@ -96,6 +94,8 @@ export default function TourDetails() {
             case 'economy':
                 formattedValue = value.toFixed(2);
                 break
+            default:
+                formattedValue = value;
         }
 
         return formattedValue;
@@ -183,14 +183,14 @@ export default function TourDetails() {
 
                     <Grid container sx={{textAlign: 'center'}}>
                         {Object.keys(details.battingStats).map(gameType => (
-                            <Grid size={{xs: 4}} key={`batting_${gameType}`}>
+                            <Grid display={'flex'} justifyContent={'center'} size={{xs: 4}} key={`batting_${gameType}`}>
                                 <Card raised sx={{maxWidth: 300, textAlign: 'center'}}>
                                     <CardContent>
                                         <Typography variant="h5" component="div">
                                             {details.name}
                                         </Typography>
                                         <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>{gameType}</Typography>
-                                        <img src={'https://res.cloudinary.com/dyoxubvbg/image/upload/v1577106216/artists/default_m.jpg'} />
+                                        <img src={'https://res.cloudinary.com/dyoxubvbg/image/upload/v1577106216/artists/default_m.jpg'} alt={details.name} />
                                         <Grid container sx={{textAlign: 'left'}}>
                                             <Grid size={{xs: 6}}>
                                                 {column1Fields.map(field => (
