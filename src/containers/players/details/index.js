@@ -7,7 +7,7 @@ import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
-export default function TourDetails() {
+export default function PlayerDetails() {
     const [ details, setDetails ] = useState({});
     const [ loaded, setLoaded ] = useState(false);
 
@@ -89,10 +89,10 @@ export default function TourDetails() {
 
         switch (field) {
             case 'average':
-                formattedValue = value.toFixed(2);
+                formattedValue = value !== null ? value.toFixed(2) : '-';
                 break;
             case 'economy':
-                formattedValue = value.toFixed(2);
+                formattedValue = value !== null ? value.toFixed(2) : '-';
                 break
             default:
                 formattedValue = value;
