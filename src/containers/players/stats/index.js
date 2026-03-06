@@ -215,9 +215,11 @@ export default function PlayerStats() {
         ]
     };
 
+    const navigate = useNavigate();
+
     const handlePlayerClick = playerId => {
         console.log(playerId);
-        // navigate('/')
+        navigate(`/players/details?id=${playerId}`);
     };
 
     useEffect(() => {
