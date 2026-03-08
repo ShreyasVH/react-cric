@@ -42,14 +42,14 @@ export default function Filters(props) {
                 sx={{position: 'fixed', bottom: '16px', right: '16px'}}
             >
 
-                <IconButton>
-                    <FilterList />
-                </IconButton>
+                <FilterList />
             </Fab>
         );
     };
 
     const isFilterSelected = key => (props.selected.hasOwnProperty(key) && (0 !== props.selected[key].length));
+
+    const isAnyFilterSelected = () => (Object.keys(props.selected).filter(k => k !== 'type').length > 0);
 
     const renderFilterSelectedIndicator = (key) => {
         if (isFilterSelected(key)) {
@@ -159,7 +159,7 @@ export default function Filters(props) {
     const renderRadioFilter = (key, filter) => {
         return (
             <div>
-                {renderClearFilterButton(key)}
+                {key !== 'type' && renderClearFilterButton(key)}
                 {renderRadioOptions(key, filter.values)}
             </div>
         );
@@ -168,6 +168,7 @@ export default function Filters(props) {
     const renderRangeFilter = (key, filter) => {
         return (
             <div>
+                {renderClearFilterButton(key)}
                 <TextField
                     name={key + '[]'}
                     data-filter={key}
@@ -248,6 +249,8 @@ export default function Filters(props) {
 
     const applyFilters = (event) => props.applyFilters && props.applyFilters();
 
+    const handleClearAllFilters = event => props.clearAllFilters && props.clearAllFilters();
+
     const renderPopup = () => {
         return (
             <Dialog
@@ -264,6 +267,10 @@ export default function Filters(props) {
                         <Button autoFocus color="inherit" onClick={applyFilters}>
                             Apply
                         </Button>
+
+                        {isAnyFilterSelected() && <Button autoFocus color="inherit" onClick={handleClearAllFilters}>
+                            Clear All
+                        </Button>}
                     </Toolbar>
                 </AppBar>
 

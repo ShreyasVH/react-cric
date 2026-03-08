@@ -23,7 +23,7 @@ export default function TourDetails() {
 
     const handlePlayerClick = playerId => e => {
         console.log(playerId);
-        // navigate('/')
+        navigate(`/players/details?id=${playerId}`);
     }
 
     const renderStadiumDetails = () => {

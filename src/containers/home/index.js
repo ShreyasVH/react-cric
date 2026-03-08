@@ -84,7 +84,7 @@ export default function Home() {
 
             <div className="tours-container">
                 <Grid container>
-                    <Grid item xs={12} sm={6} md={8} lg={9} xl={10}>
+                    <Grid size={{xs: 12, sm: 6, md: 8, lg: 9, xl: 10}}>
                         <Typography variant={'h5'} align={'center'} sx={{marginBottom: '1%'}}>
                             Tours for {year}:
                         </Typography>
@@ -112,7 +112,7 @@ export default function Home() {
                         />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+                    <Grid size={{xs: 12, sm: 6, md: 4, lg: 3, xl: 2}}>
                         <Typography variant={'h5'} align={'center'} sx={{marginBottom: '1%'}}>
                             Years:
 

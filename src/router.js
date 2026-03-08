@@ -5,6 +5,7 @@ import SeriesDetails from './containers/seriesDetails';
 import MatchDetails from './containers/matches/details';
 import MergePlayers from './containers/players/merge';
 import PlayerStats from './containers/players/stats';
+import PlayerDetails from './containers/players/details';
 
 export default createBrowserRouter([
      {
@@ -34,5 +35,9 @@ export default createBrowserRouter([
     {
         path: "/players/stats",
         element: <PlayerStats />
+    },
+    {
+        path: "/players/details",
+        element: <PlayerDetails />
     }
 ]);

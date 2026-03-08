@@ -96,7 +96,7 @@ export default function TourDetails() {
                                 <CardActionArea>
                                     <CardContent>
                                         <Grid container>
-                                            <Grid item lg={4}>
+                                            <Grid size={{lg: 4}}>
                                                 <Typography color="text.secondary" sx={{display: 'inline'}}>
                                                     {(index + 1) + '. ' + match.team1.name + ' v/s ' + match.team2.name}
                                                 </Typography>
@@ -110,13 +110,13 @@ export default function TourDetails() {
                                                 </Button>
                                             </Grid>
 
-                                            <Grid item lg={4} style={{textAlign: 'center'}}>
+                                            <Grid size={{lg: 4}} style={{textAlign: 'center'}}>
                                                 <Typography color="text.secondary" sx={{display: 'inline'}}>
                                                     {renderStadiumDetails(match.stadium)}
                                                 </Typography>
                                             </Grid>
 
-                                            <Grid item lg={4}>
+                                            <Grid size={{lg: 4}}>
                                                 <Typography color="text.secondary" sx={{float: 'right'}}>
                                                     {formatDateTimeString(match.startTime)}
                                                 </Typography>
