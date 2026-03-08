@@ -71,6 +71,12 @@ export default function PlayerStats() {
         }
     });
 
+    const getPositionFilter = () => ({
+        displayName: 'Position',
+        type: FILTER_TYPE.CHECKBOX,
+        values: [...Array(11).keys()].map(i => ({ id: String(i + 1), name: i + 1 }))
+    });
+
     const [ loaded, setLoaded ] = useState(false);
     const [ isFilterOpen, setIsFilterOpen ] = useState(false);
     const [ filterOptions, setFilterOptions ] = useState(getDefaultFilterOptions());
@@ -253,6 +259,8 @@ export default function PlayerStats() {
                     name: stadium.name
                 }))
             };
+
+            updatedFilterOptions['number'] = getPositionFilter();
             setFilterOptions(updatedFilterOptions);
         }).catch(error => console.log(error))
     }, []);
@@ -315,6 +323,28 @@ export default function PlayerStats() {
         await updateData(1, sortMap);
     };
 
+    const handleFilterEventSideEffects = (event) => {
+        const target = event.target;
+        switch (event.target.dataset.type) {
+            case FILTER_TYPE.RADIO: {
+                let key = target.dataset['key'];
+                let id = target.dataset['id'];
+
+                if (key === 'type') {
+                    const tempOptions = copyObject(filterOptions);
+                    if (id === 'batting') {
+                        tempOptions.number = getPositionFilter();
+                    } else {
+                        delete tempOptions.number;
+                    }
+                    setFilterOptions(tempOptions);
+                }
+
+                break;
+            }
+        }
+    }
+
     const handleFilterEvent = event => {
         const target = event.target;
         let tempFilters = copyObject(selectedFiltersTemp);
@@ -362,6 +392,8 @@ export default function PlayerStats() {
         }
 
         setSelectedFiltersTemp(tempFilters);
+
+        handleFilterEventSideEffects(event);
     };
 
     const handleClearFilter = key => {
