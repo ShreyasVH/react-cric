@@ -4,7 +4,7 @@ import { removeMatch } from '../../endpoints/matches';
 import Card from '@mui/material/Card';
 import { CardActionArea, CardContent, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { formatDateTimeString, copyObject } from '../../utils';
+import { formatDateTimeString, copyObject, showLoader, hideLoader } from '../../utils';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 
@@ -17,6 +17,7 @@ export default function TourDetails() {
     const handleDeleteClick = matchId => async e => {
         e.preventDefault();
         e.stopPropagation();
+        showLoader();
         const deleteResponse = await removeMatch(matchId);
         if (deleteResponse.status === 200) {
             const updatedSeries = copyObject(series);
@@ -26,6 +27,7 @@ export default function TourDetails() {
         } else {
             // TODO: add failure alert snackbar
         }
+        hideLoader();
     }
 
     const handleMatchClick = id => e => {
