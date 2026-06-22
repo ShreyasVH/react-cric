@@ -78,7 +78,7 @@ export default function Filters(props) {
         }
     };
 
-    const handleEvent = event => props.handleEvent && props.handleEvent(event);
+    const handleEvent = (event, eventProps) => props.handleEvent && props.handleEvent(event, eventProps);
 
     const isCheckboxChecked = (key, id) => {
         let selectedFilters = props.selected;
@@ -98,7 +98,7 @@ export default function Filters(props) {
                                 checked={isCheckboxChecked(key, option.id)}
                                 name={key + '[]'}
                                 data-filter={key}
-                                onChange={handleEvent}
+                                onChange={(event) => handleEvent(event, { key, type: FILTER_TYPE.CHECKBOX, id: option.id })}
                                 inputProps={{
                                     'data-key': key,
                                     'data-type': FILTER_TYPE.CHECKBOX,
@@ -138,7 +138,7 @@ export default function Filters(props) {
                                 checked={isCheckboxChecked(key, option.id)}
                                 name={key + '[]'}
                                 data-filter={key}
-                                onChange={handleEvent}
+                                onChange={(event) => handleEvent(event, { key, type: FILTER_TYPE.RADIO, id: option.id })}
                                 inputProps={{
                                     'data-key': key,
                                     'data-type': FILTER_TYPE.RADIO,
@@ -173,7 +173,7 @@ export default function Filters(props) {
                     name={key + '[]'}
                     data-filter={key}
                     data-type={FILTER_TYPE.RANGE}
-                    onChange={handleEvent}
+                    onChange={(event) => handleEvent(event, { key, type: FILTER_TYPE.RANGE, rangetype: 'from' })}
                     inputProps={{
                         'data-key': key,
                         'data-type': FILTER_TYPE.RANGE,
@@ -189,7 +189,7 @@ export default function Filters(props) {
                     name={key + '[]'}
                     data-filter={key}
                     data-type={FILTER_TYPE.RANGE}
-                    onChange={handleEvent}
+                    onChange={(event) => handleEvent(event, { key, type: FILTER_TYPE.RANGE, rangetype: 'to' })}
                     inputProps={{
                         'data-key': key,
                         'data-type': FILTER_TYPE.RANGE,
