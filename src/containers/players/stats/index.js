@@ -224,7 +224,6 @@ export default function PlayerStats() {
     const navigate = useNavigate();
 
     const handlePlayerClick = playerId => {
-        console.log(playerId);
         navigate(`/players/details?id=${playerId}`);
     };
 
@@ -345,14 +344,14 @@ export default function PlayerStats() {
         }
     }
 
-    const handleFilterEvent = event => {
+    const handleFilterEvent = (event, eventProps) => {
         const target = event.target;
         let tempFilters = copyObject(selectedFiltersTemp);
 
-        switch (event.target.dataset.type) {
+        switch (eventProps.type) {
             case FILTER_TYPE.CHECKBOX: {
-                let key = target.dataset['key'];
-                let id = target.dataset['id'];
+                let key = eventProps.key;
+                let id = eventProps.id;
                 let checked = target.checked;
 
                 if (checked) {
@@ -373,15 +372,15 @@ export default function PlayerStats() {
                 break;
             }
             case FILTER_TYPE.RADIO: {
-                let key = target.dataset['key'];
-                let id = target.dataset['id'];
+                let key = eventProps.key;
+                let id = eventProps.id;
 
                 tempFilters[key] = id;
                 break;
             }
             case FILTER_TYPE.RANGE: {
-                let key = target.dataset['key'];
-                let type = target.dataset['rangetype'];
+                let key = eventProps.key;
+                let type = eventProps.rangetype;
                 if (!tempFilters.hasOwnProperty(key)) {
                     tempFilters[key] = {};
                 }
