@@ -224,7 +224,6 @@ export default function PlayerStats() {
     const navigate = useNavigate();
 
     const handlePlayerClick = playerId => {
-        console.log(playerId);
         navigate(`/players/details?id=${playerId}`);
     };
 
@@ -346,8 +345,6 @@ export default function PlayerStats() {
     }
 
     const handleFilterEvent = (event, eventProps) => {
-        console.log(event);
-        console.log(eventProps);
         const target = event.target;
         let tempFilters = copyObject(selectedFiltersTemp);
 
