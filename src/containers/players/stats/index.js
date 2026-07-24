@@ -6,6 +6,7 @@ import { FILTER_TYPE } from "../../../constants";
 import { copyObject, showLoader, hideLoader } from '../../../utils';
 import { getAllTeams } from '../../../endpoints/teams';
 import { getAllStadiums } from '../../../endpoints/stadiums';
+import { getAllTags } from '../../../endpoints/tags';
 import PaginationBox from './paginationBox';
 import StatsTable from './statsTable';
 
@@ -231,8 +232,9 @@ export default function PlayerStats() {
         Promise.all([
             updateData(1, sortMap),
             getAllTeams(),
-            getAllStadiums()
-        ]).then(([_, allTeams, allStadiums]) => {
+            getAllStadiums(),
+            getAllTags()
+        ]).then(([_, allTeams, allStadiums, allTags]) => {
             const updatedFilterOptions = copyObject(filterOptions);
             updatedFilterOptions['team'] = {
                 displayName: 'Team',
@@ -260,6 +262,25 @@ export default function PlayerStats() {
             };
 
             updatedFilterOptions['number'] = getPositionFilter();
+
+            updatedFilterOptions['seriesTags'] = {
+                displayName: 'Series Tags',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allTags.filter(tag => tag.type === 'SERIES').map(tag => ({
+                    id: tag.id,
+                    name: tag.name
+                }))
+            };
+
+            updatedFilterOptions['matchTags'] = {
+                displayName: 'Match Tags',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allTags.filter(tag => tag.type === 'MATCH').map(tag => ({
+                    id: tag.id,
+                    name: tag.name
+                }))
+            };
+
             setFilterOptions(updatedFilterOptions);
         }).catch(error => console.log(error))
     }, []);
