@@ -272,6 +272,15 @@ export default function PlayerStats() {
                 }))
             };
 
+            updatedFilterOptions['matchTags'] = {
+                displayName: 'Match Tags',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allTags.filter(tag => tag.type === 'MATCH').map(tag => ({
+                    id: tag.id,
+                    name: tag.name
+                }))
+            };
+
             setFilterOptions(updatedFilterOptions);
         }).catch(error => console.log(error))
     }, []);
