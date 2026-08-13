@@ -32,6 +32,9 @@ export default function SearchSelect(props) {
         if (value.length >= 2) {
             setOptions(await searchItems(value));
             setOpen(true);
+        } else {
+            setOpen(false);
+            setOptions([]);
         }
         setKeyword(value);
     };
@@ -54,7 +57,7 @@ export default function SearchSelect(props) {
                     color="warn"
                 />
 
-                {open && (
+                {open && options.length > 0 && (
                     <Paper
                         elevation={4}
                         sx={{
