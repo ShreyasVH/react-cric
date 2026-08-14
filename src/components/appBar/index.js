@@ -17,6 +17,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchSelect from '../searchSelect';
+import ThemeSelector from '../../components/themeSelector'
 
 export default function AppBarCustom() {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -42,6 +43,10 @@ export default function AppBarCustom() {
                     </IconButton>
 
                     <SearchSelect onSelect={handlePlayerSelect} sx={{ ml: 'auto' }} />
+
+                    &nbsp;&nbsp;
+
+                    <ThemeSelector />
                 </Toolbar>
             </AppBar>
 

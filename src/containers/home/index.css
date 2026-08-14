@@ -24,7 +24,14 @@
     cursor: pointer;
 }
 
-.man-of-the-match {
+[data-theme="dark"] .man-of-the-match {
+    color: #E0AA3E !important;
+    border-color: #E0AA3E !important;
+    background-color: transparent !important;
+}
+
+[data-theme="light"] .man-of-the-match {
     background-color: #E0AA3E !important;
+    border-color: #E0AA3E !important;
     color: white !important;
 }
