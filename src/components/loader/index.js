@@ -15,7 +15,7 @@ export default function Loader () {
     return (
         <>
             {
-                visible && <Dialog open={true} PaperProps={{sx: {backgroundColor: 'transparent', boxShadow: 'none'}}}>
+                visible && <Dialog open={true} slotProps={{paper: { sx: {backgroundColor: 'transparent', boxShadow: 'none', backgroundImage: "none",}}}}>
                     <CircularProgress />
                 </Dialog>
             }

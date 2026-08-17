@@ -68,7 +68,8 @@ export default function SearchSelect(props) {
                             mt: 0.5,
                             zIndex: 1,
                             maxHeight: 250,
-                            overflow: "auto"
+                            overflow: "auto",
+                            boxShadow: "0 4px 10px 0 rgb(0, 0, 0);"
                         }}
                     >
                         <List dense>

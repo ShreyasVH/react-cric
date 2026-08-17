@@ -47,7 +47,7 @@ export default function TourDetails() {
                         &nbsp;
                     </strong>
 
-                    <Typography variant={'span'} sx={{color: 'blue', cursor: 'pointer'}} onClick={handleSeriesClick(match.series.id)}>
+                    <Typography className={'link'} variant={'span'} onClick={handleSeriesClick(match.series.id)}>
                         {match.series.name + ' - ' + match.series.gameType.name}
                     </Typography>
                 </div>
@@ -250,9 +250,11 @@ export default function TourDetails() {
         return (
             <div className={'row'}>
                <div className={'bordered-container'}>
-                   <div className={'container'}>
-                       {markup}
-                   </div>
+                       <Paper>
+                           <div className={'container'}>
+                            {markup}
+                           </div>
+                       </Paper>
                </div>
            </div>
         );
@@ -270,6 +272,7 @@ export default function TourDetails() {
                    match.manOfTheMatchList.map(motm => (
                        <Chip
                            label={motm.name}
+                           variant="outlined"
                            className={'man-of-the-match'}
                            key={'motm_' + motm.id}
                            onClick={handlePlayerClick(motm.id)}

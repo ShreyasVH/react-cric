@@ -11,12 +11,13 @@ import {
     ListItemIcon
 } from "@mui/material";
 import { Menu } from "@mui/icons-material";
-import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import MergeIcon from '@mui/icons-material/Merge';
 import HomeIcon from '@mui/icons-material/Home';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchSelect from '../searchSelect';
+import ThemeSelector from '../../components/themeSelector'
 
 export default function AppBarCustom() {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -42,6 +43,10 @@ export default function AppBarCustom() {
                     </IconButton>
 
                     <SearchSelect onSelect={handlePlayerSelect} sx={{ ml: 'auto' }} />
+
+                    &nbsp;&nbsp;
+
+                    <ThemeSelector />
                 </Toolbar>
             </AppBar>
 
@@ -60,7 +65,7 @@ export default function AppBarCustom() {
                     <ListItem key="playerStats">
                         <ListItemButton component={Link} to="/players/stats" onClick={closeDrawer}>
                             <ListItemIcon>
-                                <QueryStatsIcon />
+                                <BarChartIcon />
                             </ListItemIcon>
                             <ListItemText primary="Players Stats" />
                         </ListItemButton>
