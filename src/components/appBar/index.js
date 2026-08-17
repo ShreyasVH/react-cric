@@ -11,7 +11,7 @@ import {
     ListItemIcon
 } from "@mui/material";
 import { Menu } from "@mui/icons-material";
-import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import MergeIcon from '@mui/icons-material/Merge';
 import HomeIcon from '@mui/icons-material/Home';
 import { useState } from 'react';
@@ -65,7 +65,7 @@ export default function AppBarCustom() {
                     <ListItem key="playerStats">
                         <ListItemButton component={Link} to="/players/stats" onClick={closeDrawer}>
                             <ListItemIcon>
-                                <QueryStatsIcon />
+                                <BarChartIcon />
                             </ListItemIcon>
                             <ListItemText primary="Players Stats" />
                         </ListItemButton>
