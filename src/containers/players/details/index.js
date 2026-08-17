@@ -5,23 +5,23 @@ import Grid from '@mui/material/Grid';
 import { getDetails as getPlayerDetails } from '../../../endpoints/players';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
+import { useSearchParams } from 'react-router-dom';
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
 export default function PlayerDetails() {
     const [ details, setDetails ] = useState({});
     const [ loaded, setLoaded ] = useState(false);
 
+    const [searchParams] = useSearchParams();
+
     useEffect(() => {
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const id = urlSearchParams.get('id');
-        console.log(id);
+        const id = searchParams.get('id');
 
         getPlayerDetails(id).then(detailsResponse => {
             setDetails(detailsResponse.data.data);
-            console.log(detailsResponse);
             setLoaded(true);
         });
-    }, []);
+    }, [searchParams]);
 
     const column1Fields = [
         {

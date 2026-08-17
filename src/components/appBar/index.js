@@ -15,14 +15,22 @@ import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import MergeIcon from '@mui/icons-material/Merge';
 import HomeIcon from '@mui/icons-material/Home';
 import { useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
+import SearchSelect from '../searchSelect';
 
 export default function AppBarCustom() {
     const [drawerOpen, setDrawerOpen] = useState(false);
 
+    const navigate = useNavigate();
+
     const toggleDrawer = () => setDrawerOpen(!drawerOpen)
 
     const closeDrawer = () => setDrawerOpen(false)
+
+    const handlePlayerSelect = (event, item) => {
+        const url = `/players/details?id=${item.id}`;
+        navigate(url);
+    };
 
     return (
         <>
@@ -32,6 +40,8 @@ export default function AppBarCustom() {
                     <IconButton edge="start" color="inherit" onClick={toggleDrawer}>
                         <Menu />
                     </IconButton>
+
+                    <SearchSelect onSelect={handlePlayerSelect} sx={{ ml: 'auto' }} />
                 </Toolbar>
             </AppBar>
 
